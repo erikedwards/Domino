@@ -1,8 +1,15 @@
 # Dominoes
-# 12/6/18
+# 12/9/18
 # Erik Edwards
 
-# semi-stable. first sync to github
+# TODO - Bugs
+#  - proto-chain: moves to n and s get lost instead of rejected?
+#  - check for game points and end game.
+# TODO - Features
+#  - Intro screen to choose players, computer algorithm, score goal, etc
+#  - Add comp player algorithms
+#  - Add "auto-play n games" feature to find best comp algorithm
+#  - App UI. Use Kivy?
 
 # import headers
 from random import shuffle
