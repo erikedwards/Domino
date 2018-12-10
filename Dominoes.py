@@ -205,8 +205,7 @@ class CompFirstLegalMoveAlgorithm(Player):
     def __init__(self, player_num):
         super(CompFirstLegalMoveAlgorithm, self).__init__(player_num)
 
-    def make_move(self, board):
-        # game.play_bone(bone, pos)
+    def make_move(self):
         positions = ["N", "S", "E", "W"]
         # check each bone in hand at each position on board and play first available legal move
         for d in self.hand:
@@ -801,10 +800,6 @@ class Game:
 
         # if there's a spinner, start there then add any side that have non-zero length
         if self.board.spinner_played:
-            # offset spinner to center whole chain (positive right and up)
-            spinner_x_offset = (self.board.w_chain.__len__() - self.board.e_chain.__len__())/2 * DOMINO_HEIGHT
-            spinner_y_offset = (self.board.n_chain.__len__() - self.board.s_chain.__len__())/2 * DOMINO_HEIGHT
-           #  self.board.spinner.bone_img.rect.move_ip(-1*spinner_x_offset, -1*spinner_y_offset)
             # draw spinner (vert orientation)
             board_box.blit(self.board.spinner.bone_img.image[0], self.board.spinner.bone_img.rect)
             # draw E
@@ -977,7 +972,18 @@ class Game:
             # assume board is legal. don't check rules
 
             # start with spinner
-            self.board.spinner.bone_img.rect.center = board_box.get_rect().center
+            # offset spinner to center chains on screen
+            if self.board.e_chain.__len__() > 5 or \
+               self.board.w_chain.__len__() > 5 or \
+               self.board.n_chain.__len__() > 3 or \
+               self.board.s_chain.__len__() > 3:
+                spinner_x_offset = (self.board.w_chain.__len__() - self.board.e_chain.__len__()) / 2 * DOMINO_HEIGHT
+                spinner_y_offset = (self.board.n_chain.__len__() - self.board.s_chain.__len__()) / 2 * DOMINO_HEIGHT
+                sx = board_box.get_rect().centerx + spinner_x_offset
+                sy = board_box.get_rect().centery + spinner_y_offset
+                self.board.spinner.bone_img.rect.center = (sx, sy)
+            else:
+                self.board.spinner.bone_img.rect.center = board_box.get_rect().center
 
             # draw e_chain
             for d in self.board.e_chain:
@@ -1205,7 +1211,7 @@ while not game.game_over:
         if USE_DELAYS:
             pygame.time.delay(DELAY)
         # try making a move from hand, draw if no legal moves are available
-        if not game.players[1].make_move(game.board):
+        if not game.players[1].make_move():
             if game.yard.yard.__len__() > 0:
                 game.players[1].draw(game.yard.yard.pop())
             else:
